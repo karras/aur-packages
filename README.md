@@ -2,6 +2,8 @@
 
 AUR packages I *try* to maintain.
 
+[![Test](https://github.com/karras/aur-packages/actions/workflows/test.yml/badge.svg)](https://github.com/karras/aur-packages/actions/workflows/test.yml)
+
 ## Overview
 
 The following AUR PKGBUILDs are provided:
