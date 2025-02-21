@@ -8,6 +8,9 @@ AUR packages I *try* to maintain.
 
 The following AUR PKGBUILDs are provided:
 
+* [runit-systemd](./runit-systemd/PKGBUILD)
+  - [AUR](https://aur.archlinux.org/packages/runit-systemd)
+  - [Upstream](https://smarden.org/runit/)
 * [wayland-logout](./wayland-logout/PKGBUILD)
   - [AUR](https://aur.archlinux.org/packages/wayland-logout)
   - [Upstream](https://github.com/soreau/wayland-logout)
