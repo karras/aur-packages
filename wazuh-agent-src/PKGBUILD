@@ -11,41 +11,47 @@ url="https://github.com/wazuh/wazuh"
 license=('GPL-2.0-only')
 provides=('wazuh-agent')
 conflicts=('wazuh-agent')
-makedepends=('autoconf'
-             'automake'
-             'base-devel'
-             'brotli'
-             'cmake'
-             'curl'
-             'expect'
-             'fakeroot'
-             'gawk'
-             'gcc14'
-             'gnupg'
-             'inetutils'
-             'libsigsegv'
-             'libtool'
-             'make'
-             'nodejs'
-             'perl'
-             'perl-base'
-             'python'
-             'sudo'
-             'wget')
-optdepends=(
-             'lsb-release: for detecting the Linux distribution'
+makedepends=(
+  'autoconf'
+  'automake'
+  'base-devel'
+  'brotli'
+  'cmake'
+  'curl'
+  'expect'
+  'fakeroot'
+  'gawk'
+  'gcc14'
+  'gnupg'
+  'inetutils'
+  'libsigsegv'
+  'libtool'
+  'make'
+  'nodejs'
+  'perl'
+  'perl-base'
+  'python'
+  'sudo'
+  'wget'
 )
-
-source=("https://github.com/wazuh/wazuh/archive/v${pkgver}.tar.gz")
-sha512sums=('062c9fa4bbe2ec9dbabc71c4b8b87ad9e592c3ccdd2f707fd3292f64b24ce1f09bf979d09299da144e7e13bdb66ca3ad8681c9bbbede363d661b2bb1b8d6747e')
-
+optdepends=(
+  'lsb-release: for detecting the Linux distribution'
+)
+source=(
+  "https://github.com/wazuh/wazuh/archive/v${pkgver}.tar.gz"
+  wazuh-agent-src.sysusers
+  wazuh-agent-src.tmpfiles
+)
+sha512sums=(
+  '062c9fa4bbe2ec9dbabc71c4b8b87ad9e592c3ccdd2f707fd3292f64b24ce1f09bf979d09299da144e7e13bdb66ca3ad8681c9bbbede363d661b2bb1b8d6747e'
+  '13e8779f5e54fc444124d29d3c26f8ceda11bfd40c4ff995a68492a8ebd6cc3ecf906e7f109bf9860bef1e8dff390fb0a3e2c61e4c597f47dc9f0f36b39f1099'
+  'c50cd4d3758b67e3276f4435d419a0170da88ba525f40d8230a5c63e5841285e8c75df6794e9dd26a8b9b9df8cc42c55708e7be09b631f02e0733d4c25b5374f'
+)
 backup=(
   "opt/wazuh-agent/etc/client.keys"
   "opt/wazuh-agent/etc/local_internal_options.conf"
   "opt/wazuh-agent/etc/ossec.conf"
 )
-
-install="${pkgname}.install"
 
 build() {
   cd "${srcdir}/wazuh-${pkgver}/src"
@@ -59,6 +65,10 @@ build() {
 }
 
 package() {
+  # Add the systemd sysusers and tmpfiles configs
+  install -Dm644 wazuh-agent-src.sysusers "${pkgdir}/usr/lib/sysusers.d/wazuh-agent.conf"
+  install -Dm644 wazuh-agent-src.tmpfiles "${pkgdir}/usr/lib/tmpfiles.d/wazuh-agent.conf"
+
   # Since the Makefile has no "install" target and users are instructed to run
   # install.sh, we have to mimic it line-by-line and copy the files
   # individually. :-(
@@ -243,5 +253,5 @@ package() {
   sed -i 's/WAZUH_HOME_TMP/\/opt\/wazuh-agent/g' "${pkgdir}/usr/lib/systemd/system/wazuh-agent.service"
 
   # Add the license file
-  install -Dvm644 ../LICENSE -t "${pkgdir}/usr/share/licenses/wazuh-agent/"
+  install -Dm644 ../LICENSE -t "${pkgdir}/usr/share/licenses/wazuh-agent/"
 }
