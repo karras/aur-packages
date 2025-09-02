@@ -1,0 +1,53 @@
+post_install() {
+  # Since the Makefile has no "install" target and users are instructed to run
+  # install.sh, we have to mimic it line-by-line and copy the files
+  # individually. :-(
+  local wazuh_group='wazuh'
+  local wazuh_user='wazuh'
+  local installdir="/opt/wazuh-agent"
+
+  chown root:"${wazuh_group}" "${installdir}/"
+
+  chown "${wazuh_user}":"${wazuh_group}" "${installdir}/VERSION.json"
+
+  chown -R "${wazuh_user}":"${wazuh_group}" "${installdir}/logs"
+
+  chown -R root:"${wazuh_group}" "${installdir}/lib"
+
+  chown root:"${wazuh_group}" "${installdir}/queue"
+  chown -R "${wazuh_user}":"${wazuh_group}" "${installdir}/queue/*"
+
+  chown -R root:"${wazuh_group}" "${installdir}/lib"
+
+  chown -R root:"${wazuh_group}" "${installdir}/var"
+
+  chown root:"${wazuh_group}" "${installdir}/tmp"
+
+  chown "${wazuh_user}":"${wazuh_group}" "${installdir}/etc"
+  chown root:"${wazuh_group}" "${installdir}/etc/internal_options.conf"
+  chown root:"${wazuh_group}" "${installdir}/etc/local_internal_options.conf"
+  chown root:"${wazuh_group}" "${installdir}/etc/client.keys"
+  chown root:"${wazuh_group}" "${installdir}/etc/ossec.conf"
+  chown root:"${wazuh_group}" "${installdir}/etc/wpk_root.pem"
+  chown -R root:"${wazuh_group}" "${installdir}/etc/shared"
+
+  # root:root for bin?
+
+  if [ -f "${installdir}/etc/localtime" ]
+  then
+       chown root:"${wazuh_group}" "${installdir}/etc/localtime"
+  fi
+  if [ -f "${installdir}/etc/TIMEZONE" ]; then
+       chown root:"${wazuh_group}" "${installdir}/etc/TIMEZONE"
+  fi
+
+  chown -R root:"${wazuh_group}" "${installdir}/ruleset"
+
+  chown -R root:"${wazuh_group}" "${installdir}/wodles"
+  chown root:"${wazuh_group}" "${installdir}/var/wodles"
+
+  chown -R root:"${wazuh_group}" "${installdir}/active-response"
+  chown -R root:"${wazuh_group}" "${installdir}/agentless"
+  chown -R root:"${wazuh_group}" "${installdir}/.ssh"
+  chown -R root:"${wazuh_group}" "${installdir}/backup"
+}
