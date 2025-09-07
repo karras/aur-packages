@@ -6,7 +6,11 @@ z /opt/wazuh-agent/queue/                          - root  wazuh -
 Z /opt/wazuh-agent/queue/*                         - wazuh wazuh -
 Z /opt/wazuh-agent/var/                            - root  wazuh -
 Z /opt/wazuh-agent/tmp/                            - root  wazuh -
-z /opt/wazuh-agent/etc/                            - wazuh wazuh -
+
+# Slight deviation from init/inst-functions.sh which uses wazuh:wazuh. This
+# results in errors as the subsequent files would be more restricted.
+z /opt/wazuh-agent/etc/                            - root  wazuh -
+
 z /opt/wazuh-agent/etc/internal_options.conf       - root  wazuh -
 z /opt/wazuh-agent/etc/local_internal_options.conf - root  wazuh -
 z /opt/wazuh-agent/etc/client.keys                 - root  wazuh -
