@@ -25,6 +25,12 @@ orphaned state after GDK could no longer be bootstrapped.
   - [AUR](https://aur.archlinux.org/packages/wayland-logout)
   - [Upstream](https://github.com/soreau/wayland-logout)
 
+### wazuh-agent-src
+
+* [wazuh-agent-src](./wazuh-agent-src/PKGBUILD)
+  - [AUR](https://aur.archlinux.org/packages/wazuh-agent-src)
+  - [Upstream](https://github.com/wazuh/wazuh)
+
 ## License
 
 See [LICENSE](./LICENSE)
