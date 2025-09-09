@@ -41,11 +41,13 @@ source=(
   "https://github.com/wazuh/wazuh/archive/v${pkgver}.tar.gz"
   wazuh-agent-src.sysusers
   wazuh-agent-src.tmpfiles
+  ossec.conf
 )
 sha512sums=(
   '062c9fa4bbe2ec9dbabc71c4b8b87ad9e592c3ccdd2f707fd3292f64b24ce1f09bf979d09299da144e7e13bdb66ca3ad8681c9bbbede363d661b2bb1b8d6747e'
   '13e8779f5e54fc444124d29d3c26f8ceda11bfd40c4ff995a68492a8ebd6cc3ecf906e7f109bf9860bef1e8dff390fb0a3e2c61e4c597f47dc9f0f36b39f1099'
   '1a4e31e0a18371dc4fec65a388b3a8c54d3e69e2413c1584394a1c2108ade261d81e63a31dff081003a3e8913b461b0aa18c4d9f070ea2fe5921f3372238b3fd'
+  'dce84e1d8af52f439abb4c9166936d8432abb1e03652e29e4485b45534d0f3b4e8048e37e247545998fbd021b7696356a2c6f992db763a60288225f70e4097be'
 )
 backup=(
   "opt/wazuh-agent/etc/client.keys"
@@ -74,7 +76,6 @@ package() {
   # individually. :-(
   installdir="${pkgdir}/opt/wazuh-agent"
   ossec_control_src='./init/wazuh-client.sh'
-  ossec_conf_src='../etc/ossec-agent.conf'
 
   cd "${srcdir}/wazuh-${pkgver}/src"
 
@@ -145,7 +146,11 @@ package() {
   install -m 0640 ../etc/internal_options.conf ${installdir}/etc/
   install -m 0640 ../etc/local_internal_options.conf ${installdir}/etc/local_internal_options.conf
   install -m 0640 /dev/null ${installdir}/etc/client.keys
-  install -m 0660 ${ossec_conf_src} ${installdir}/etc/ossec.conf
+
+  # We ship our own modified ossec.conf for better transparency since
+  # install.sh by default uses a templating mechanism
+  install -m 0660 ${srcdir}/ossec.conf ${installdir}/etc/ossec.conf
+
   install -m 0640 ../etc/wpk_root.pem ${installdir}/etc/
   install -d -m 0770 ${installdir}/etc/shared
   install -m 0660 ../ruleset/rootcheck/db/*.txt ${installdir}/etc/shared/
