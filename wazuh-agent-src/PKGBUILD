@@ -39,6 +39,13 @@ optdepends=(
 )
 source=(
   "https://github.com/wazuh/wazuh/archive/v${pkgver}.tar.gz"
+  wazuh-agent
+  wazuh-agent.target
+  wazuh-agentd.service
+  wazuh-execd.service
+  wazuh-logcollector.service
+  wazuh-modulesd.service
+  wazuh-syscheckd.service
   wazuh-agent-src.sysusers
   wazuh-agent-src.tmpfiles
   ossec.conf
@@ -50,10 +57,21 @@ sha512sums=(
   'e239572016b45a1514b0b35cbb7c3525de62c4395069277c7568616acda082c83a40f5760fef70dded262a1d611b65965037a0ec3884e0142c758424016e3563'
 )
 backup=(
+  "etc/conf.d/wazuh-agent"
   "opt/wazuh-agent/etc/client.keys"
   "opt/wazuh-agent/etc/local_internal_options.conf"
   "opt/wazuh-agent/etc/ossec.conf"
 )
+
+prepare() {
+  # Replace templated WAZUH_HOME_TMP to /opt
+  for e in "wazuh-agent.target" "wazuh-agentd.service" "wazuh-execd.service" \
+    "wazuh-logcollector.service" "wazuh-modulesd.service" \
+    "wazuh-syscheckd.service"
+  do
+    sed -i 's/WAZUH_HOME_TMP/\/opt\/wazuh-agent/g' "${e}"
+  done
+}
 
 build() {
   cd "${srcdir}/wazuh-${pkgver}/src"
@@ -71,6 +89,17 @@ package() {
   # Add the systemd sysusers and tmpfiles configs
   install -Dm644 wazuh-agent-src.sysusers "${pkgdir}/usr/lib/sysusers.d/wazuh-agent.conf"
   install -Dm644 wazuh-agent-src.tmpfiles "${pkgdir}/usr/lib/tmpfiles.d/wazuh-agent.conf"
+
+  # Add the systemd service files
+  for e in "wazuh-agent.target" "wazuh-agentd.service" "wazuh-execd.service" \
+    "wazuh-logcollector.service" "wazuh-modulesd.service" \
+    "wazuh-syscheckd.service"
+  do
+    install -Dm0644 "${e}" -t "${pkgdir}/usr/lib/systemd/system"
+  done
+
+  # Add conf.d file for systemd
+  install -Dm0644 "wazuh-agent" -t "${pkgdir}/etc/conf.d"
 
   # Since the Makefile has no "install" target and users are instructed to run
   # install.sh, we have to mimic it line-by-line and copy the files
@@ -253,10 +282,6 @@ package() {
 
   # Populate agent backup directory
   install -d -m 0750 ${installdir}/backup
-
-  # Add the systemd service file
-  install -Dm644 ./init/templates/wazuh-agent.service "${pkgdir}/usr/lib/systemd/system/wazuh-agent.service"
-  sed -i 's/WAZUH_HOME_TMP/\/opt\/wazuh-agent/g' "${pkgdir}/usr/lib/systemd/system/wazuh-agent.service"
 
   # Add the license file
   install -Dm644 ../LICENSE -t "${pkgdir}/usr/share/licenses/wazuh-agent/"

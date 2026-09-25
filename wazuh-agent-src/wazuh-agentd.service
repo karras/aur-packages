@@ -1,0 +1,32 @@
+[Unit]
+Description=wazuh-agent communication daemon
+PartOf=wazuh-agent.target
+After=network.target network-online.target nss-lookup.target basic.target wazuh-execd.service
+Wants=network-online.target nss-lookup.target
+Requires=wazuh-execd.service
+
+[Service]
+EnvironmentFile=-/etc/conf.d/wazuh-agent
+WorkingDirectory=
+ReadWritePaths=WAZUH_HOME_TMP/queue WAZUH_HOME_TMP/var WAZUH_HOME_TMP/logs
+ReadWritePaths=WAZUH_HOME_TMP/etc/client.keys
+# The permissions will be dropped to wazuh user
+ExecStart=WAZUH_HOME_TMP/bin/wazuh-agentd -f -c WAZUH_HOME_TMP/etc/ossec.conf $WAZUH_ARGS
+ExecReload=/bin/kill -HUP $MAINPID
+NoNewPrivileges=false
+ProtectHome=true
+ProtectSystem=strict
+ProtectHostname=true
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectProc=invisible
+LockPersonality=true
+RestrictRealtime=true
+RestrictNamespaces=true
+MemoryDenyWriteExecute=true
+PrivateDevices=true
+PrivateTmp=true
+
+[Install]
+WantedBy=wazuh-agent.target

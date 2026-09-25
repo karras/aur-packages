@@ -1,0 +1,2 @@
+# Enable debug for wazuh daemons
+#WAZUH_ARGS="-d"
