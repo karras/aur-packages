@@ -1,0 +1,34 @@
+[Unit]
+Description=wazuh-agent Modules daemon
+PartOf=wazuh-agent.target
+After=network.target network-online.target nss-lookup.target basic.target wazuh-agentd.service
+Wants=network-online.target nss-lookup.target wazuh-agent.target
+Requires=wazuh-agentd.service
+
+[Service]
+EnvironmentFile=-/etc/conf.d/wazuh-agent
+WorkingDirectory=WAZUH_HOME_TMP
+ReadWritePaths=WAZUH_HOME_TMP/var WAZUH_HOME_TMP/queue WAZUH_HOME_TMP/wodles WAZUH_HOME_TMP/logs
+ReadOnlyPaths=/var/lib/rpm /usr/lib/sysimage/rpm
+ReadOnlyPaths=/etc/os-release /etc/redhat-release /usr/lib/os-release
+ReadOnlyPaths=/etc/passwd /etc/group /etc/services
+# The permissions will be dropped to wazuh user
+ExecStart=WAZUH_HOME_TMP/bin/wazuh-modulesd -f $WAZUH_ARGS
+ExecReload=/bin/kill -HUP $MAINPID
+NoNewPrivileges=false
+ProtectHome=true
+ProtectSystem=strict
+ProtectHostname=true
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectProc=invisible
+LockPersonality=true
+RestrictRealtime=true
+RestrictNamespaces=true
+MemoryDenyWriteExecute=true
+PrivateDevices=true
+PrivateTmp=true
+
+[Install]
+WantedBy=wazuh-agent.target

@@ -1,0 +1,6 @@
+[Unit]
+Description=wazuh-agent target allowing to start/stop all wazuh services at once
+Wants=wazuh-agentd.service wazuh-execd.service wazuh-logcollector.service wazuh-modulesd.service wazuh-syscheckd.service
+
+[Install]
+WantedBy=multi-user.target
